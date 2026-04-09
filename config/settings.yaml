@@ -1,0 +1,30 @@
+app:
+  name: instagram-agent
+  polling_interval_minutes: 5
+  log_level: INFO
+
+drive:
+  input_folder_id: ""
+  output_folder_id: ""
+  check_interval_minutes: 1
+
+image_editor:
+  model: qwen/qwen2-vl-7b-instruct
+  max_size_mb: 5
+  max_retries: 3
+  retry_delay_seconds: 5
+  prompt_file: config/prompts/image_editor.md
+
+caption:
+  model: groq/llama-3.3-70b-versatile
+  max_retries: 3
+  retry_delay_seconds: 2
+  fallback_caption: "✨ Nueva foto publicada"
+  prompt_file: config/prompts/caption.md
+
+telegram:
+  enabled: true
+  chat_id: ""
+
+tracking:
+  file: processed_images.json

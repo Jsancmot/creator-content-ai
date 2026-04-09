@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+.env
+.env.local
+.env.*
+*.json
+*.log
+.DS_Store
+
+# Claude & Agent configs
+.claude/
+.agents/
+openspec/
+skills-lock.json

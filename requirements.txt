@@ -1,0 +1,6 @@
+agno
+litellm
+google-api-python-client
+python-telegram-bot
+pyyaml
+Pillow
