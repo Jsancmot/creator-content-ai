@@ -1,0 +1,54 @@
+flowchart TB
+    subgraph Google_Drive["Google Drive"]
+        Input[Input Folder]
+        Output[Output Folder]
+    end
+
+    subgraph Instagram_Agent["Instagram Agent"]
+        Scheduler["Polling Scheduler<br/>Every N minutes"]
+        
+        subgraph Drive_Client["Drive Client"]
+            DC1[List Images]
+            DC2[Download Image]
+            DC3[Upload Image]
+        end
+        
+        subgraph Image_Tracker["Image Tracker"]
+            IT1[Check if processed]
+            IT2[Mark as processed]
+        end
+        
+        subgraph Image_Editor["Image Editor Agent"]
+            IE1[Load Prompt]
+            IE2[Edit Image via LiteLLM]
+        end
+        
+        subgraph Caption_Agent["Caption Agent"]
+            CA1[Load Prompt]
+            CA2[Generate Caption via LiteLLM]
+        end
+        
+        subgraph Telegram["Telegram Notifier"]
+            TN1["Send Image + Caption"]
+            TN2[Send Error Notification]
+        end
+    end
+    
+    User[Telegram User]
+    
+    Scheduler --> DC1
+    DC1 --> IT1
+    IT1 -->|"Not processed"| DC2
+    IT1 -->|"Already processed"| Skip[Skip]
+    DC2 --> IE1
+    IE1 --> IE2
+    IE2 --> CA1
+    CA1 --> CA2
+    CA2 --> DC3
+    DC3 --> TN1
+    TN1 --> User
+    
+    IE2 -->|Error| TN2
+    CA2 -->|Error| TN2
+    DC2 -->|Error| TN2
+    TN2 --> User
