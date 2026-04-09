@@ -1,17 +1,48 @@
-version: '3.8'
-
 services:
-  instagram-agent:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=litellm
+      - POSTGRES_PASSWORD=litellm123
+      - POSTGRES_DB=litellm
+    volumes:
+      - litellm_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U litellm"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm_config.yaml:/app/config.yaml
+    environment:
+      - DATABASE_URL=postgresql://litellm:litellm123@db:5432/litellm
+      - LITELLM_MASTER_KEY=sk-litellm123
+      - UI_USERNAME=admin
+      - UI_PASSWORD=admin123
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+
+  app:
     build: .
-    container_name: instagram-agent
+    depends_on:
+      - litellm
+    ports:
+      - "8001:8001"
     env_file:
       - .env
     volumes:
       - ./processed_images.json:/app/processed_images.json
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+      - ./secrets:/app/secrets
+    environment:
+      - LLM_API_BASE=http://litellm:4000
+      - TZ=Europe/Madrid
+
+volumes:
+  litellm_db:
