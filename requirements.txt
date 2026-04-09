@@ -1,6 +1,6 @@
-agno
-litellm
-google-api-python-client
-python-telegram-bot
-pyyaml
-Pillow
+agno==2.5.15
+litellm==1.82.6
+google-api-python-client==2.194.0
+python-telegram-bot==22.7
+pyyaml==6.0.3
+Pillow==12.2.0
